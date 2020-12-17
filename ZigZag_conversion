@@ -1,0 +1,58 @@
+class Solution {
+public:
+    string convert(string s, int numRows) {
+     
+        int n=s.length();
+        if(numRows>=n || numRows ==1) {
+            return s;
+        }
+        
+
+      vector<vector<char>> v(numRows, vector<char>(n,'0'));
+        string res="";
+      int count =0;
+      bool check=0;
+        int i=0,j=0;
+      while(count<n){
+          
+          if(i<=0){
+              check=!check;
+              
+          }
+          if(i<0){
+              i=1;
+          }
+          if(i==numRows){
+              check=!check;
+             
+              i=numRows-2;
+              j++;
+          }
+          if(check){
+              v[i][j]=s[count++];
+            //  res+=s[count++];
+              i++;
+          }else{
+              
+              v[i][j]=s[count++];
+              
+              i--;
+              
+              j++;     
+          }
+          
+          
+          
+      }  
+        
+        for(int i=0;i<numRows;i++){
+            for(int j=0;j<n;j++){
+                if(v[i][j]!='0'){
+                    res+=v[i][j];
+                }
+            }
+        }
+        return res;
+        
+    }
+};
