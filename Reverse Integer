@@ -1,0 +1,41 @@
+#include<bits/stdc++.h>
+class Solution {
+public:
+    int reverse(int x) {
+        bool check=0;
+        long long int j=x;
+        if(x<0){
+            check=1;
+            j=-1*j;
+        }
+        
+        if(!check && j>=pow(2,31)){
+            return 0;
+        }
+        
+        if(check && j>pow(2,31)){
+            return 0;
+        }
+        
+        string a= to_string(x);
+        
+        std::reverse(a.begin(),a.end());
+        int y=0;
+       try
+    {
+         y= std::stoi(a);
+        
+    }
+    catch (std::out_of_range const &e)
+    {
+        return 0;
+    }
+        if(check){
+            y=-1*y;
+        }
+        
+        return y;
+        
+        
+    }
+};
