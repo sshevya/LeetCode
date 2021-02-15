@@ -1,0 +1,56 @@
+class Solution {
+public:
+    int divide(int dividend, int divisor) {
+        
+        
+        long long divd=dividend;
+        long long divr=divisor;
+        
+        long long int quotient=0, temp=0;
+        bool check=0;
+        if((dividend<0)^(divisor<0)){
+            check=1;
+        }
+        if(divr==-1 && divd ==INT_MIN){
+            return INT_MAX;
+        }
+        if(divr==1 && divd ==INT_MIN){
+            return INT_MIN;
+        }
+        
+        divd=abs(dividend);
+        divr=abs(divisor);
+        /*while(divd>=divr){
+            divd-=divr;
+            count++;
+            if(count==INT_MAX){
+                
+                    break;
+                    
+                
+            }
+        }*/
+        int i;
+        for(i=31;i>=0;--i){
+            if(temp+(divr<<i)<=divd){
+                temp+=(divr<<i);
+                quotient|=(1LL<<i);
+                int next=1;
+                if(i!=0)
+                next=1LL<<(i-1);
+                if((quotient|next)>=INT_MAX || quotient==INT_MAX){
+                    quotient=INT_MAX;
+                    
+                    break;
+                    
+                }
+            }
+        }
+        
+       
+        if(check==1)
+            quotient=-1*quotient;
+        return quotient;
+        
+    }
+};
