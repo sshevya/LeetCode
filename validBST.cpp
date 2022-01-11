@@ -1,3 +1,41 @@
+//Iterative inorder based solution
+
+class Solution {
+public:
+    
+    
+    bool isValidBST(TreeNode* root) {
+        
+        stack<TreeNode*> s;
+        TreeNode* curr=root;
+        
+        long long left_child=-1*LONG_LONG_MAX;
+        while(!s.empty() || curr!=NULL){
+            while(curr!=NULL){
+                s.push(curr);
+                curr=curr->left;
+            }
+            
+            
+            curr=s.top();
+            s.pop();
+            
+            if(curr->val<=left_child){
+                return false;
+            }
+            left_child=curr->val;
+            curr=curr->right;
+            
+        }
+        
+        return true;
+        
+    }
+};
+
+
+//Recursive
+
 class Solution {
 public:
     
