@@ -1,0 +1,40 @@
+class Solution {
+public:
+    void backtrack(vector<vector<int>>& ans, vector<int>& nums, int i){
+        if(i==nums.size()){
+
+            ans.push_back(nums);
+            return;
+        }
+
+        if(i>=nums.size()){
+            return;
+        }
+
+        unordered_map<int,int> m;
+        for(int j=i;j<nums.size();j++){
+            if(m.find(nums[j])!=m.end()){
+                continue;
+            }
+
+            swap(nums[i],nums[j]);
+            
+            backtrack(ans,nums,i+1);
+            swap(nums[i],nums[j]);
+            m[nums[j]]=1;
+        }
+
+
+
+
+    }
+    
+    
+    
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+    vector<vector<int>> ans;
+    
+    backtrack(ans,nums,0);
+    return ans;
+    }
+};
