@@ -48,3 +48,58 @@ public:
         
     }
 };
+
+
+
+
+
+/****** second sol********/
+
+class Solution {
+public:
+    bool backtrack(vector<vector<char>> &board, vector<vector<bool>> visited, string word, int index, int i, int j){
+        
+        if(index == word.length()){
+            return true;
+        }
+        if(i>=board.size() || j>=board[0].size() || i<0 || j<0){
+            return false;
+        }
+        
+        if(board[i][j]!=word[index] || visited[i][j]==true){
+            return false;
+        }
+
+        
+    
+        
+        visited[i][j]=true;
+
+
+        bool bottom = backtrack(board, visited, word, index+1, i+1,j);
+        bool top = backtrack(board,visited, word, index+1, i-1,j);
+        bool right = backtrack(board,visited, word, index+1, i,j+1);
+        bool left = backtrack(board,visited, word, index+1, i,j-1);
+        
+    
+    return bottom || top || right || left;
+    }
+    
+    
+    
+    
+    bool exist(vector<vector<char>>& board, string word) {
+
+        vector<vector<bool>> visited(board.size(), vector<bool>(board[0].size(),false));
+        for(int i=0;i<board.size();i++){
+            for(int j=0;j<board[0].size();j++){
+                if(board[i][j]==word[0]){
+                    if(backtrack(board, visited, word, 0, i, j)){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+};
