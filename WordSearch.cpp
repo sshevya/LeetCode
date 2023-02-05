@@ -54,34 +54,30 @@ public:
 
 
 /****** second sol********/
-
 class Solution {
 public:
-    bool backtrack(vector<vector<char>> &board, vector<vector<bool>> visited, string word, int index, int i, int j){
+    bool backtrack(vector<vector<char>> &board, string word, int index, int i, int j, int n, int m){
         
         if(index == word.length()){
             return true;
         }
-        if(i>=board.size() || j>=board[0].size() || i<0 || j<0){
+        if(i<0 || j<0 ||i>=n || j>=m ||  board[i][j]!=word[index] || board[i][j]=='*'){
             return false;
         }
         
-        if(board[i][j]!=word[index] || visited[i][j]==true){
-            return false;
-        }
 
         
     
-        
-        visited[i][j]=true;
+        char c = board[i][j];
+        board[i][j]='*';
 
 
-        bool bottom = backtrack(board, visited, word, index+1, i+1,j);
-        bool top = backtrack(board,visited, word, index+1, i-1,j);
-        bool right = backtrack(board,visited, word, index+1, i,j+1);
-        bool left = backtrack(board,visited, word, index+1, i,j-1);
+        bool bottom = backtrack(board, word, index+1, i+1,j,n,m);
+        bool top = backtrack(board, word, index+1, i-1,j,n,m);
+        bool right = backtrack(board, word, index+1, i,j+1,n,m);
+        bool left = backtrack(board, word, index+1, i,j-1,n,m);
         
-    
+        board[i][j]=c;
     return bottom || top || right || left;
     }
     
@@ -90,11 +86,15 @@ public:
     
     bool exist(vector<vector<char>>& board, string word) {
 
-        vector<vector<bool>> visited(board.size(), vector<bool>(board[0].size(),false));
-        for(int i=0;i<board.size();i++){
-            for(int j=0;j<board[0].size();j++){
+        int n= board.size();
+        int m = board[0].size();
+        
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
                 if(board[i][j]==word[0]){
-                    if(backtrack(board, visited, word, 0, i, j)){
+                    //vector<vector<bool>> visited(n, vector<bool>(m,false));
+
+                    if(backtrack(board, word, 0, i, j,n,m)){
                         return true;
                     }
                 }
