@@ -1,4 +1,4 @@
-/************ Solution 1
+/************ Solution 1 Fast
 
     class Solution {
 public:
@@ -25,6 +25,7 @@ public:
             }else{
                 ans.push_back(intervals[i]);
             }
+        }
          return ans;
 
     }
