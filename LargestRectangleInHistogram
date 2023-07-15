@@ -1,0 +1,61 @@
+class Solution {
+public:
+
+
+    int nextSmallerLeft(vector<int>& heights, int curr){
+
+        int ans = curr ;
+        for(int i = curr-1;i>=0;i--){
+            if(heights[i]<heights[curr]){
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    int nextSmallerRight(vector<int>& heights, int curr){
+
+        int n = heights.size() ;
+        for(int i = curr+1;i<n;i++){
+            if(heights[i]<heights[curr]){
+                return i;
+            }
+        }
+        return n-1;
+    }       
+
+
+    int largestRectangleArea(vector<int>& heights) {
+        int n = heights.size();
+        int maxArea = heights[0];
+        
+        stack<int> s;
+        int i = 0;
+        while(i<n){
+
+            if(s.empty() || heights[s.top()]<=heights[i]){
+                s.push(i);
+                i++;
+            }
+            else{
+                
+                int j = s.top();
+                s.pop();
+                int ar_with_top = heights[j]*(s.empty()?i:(i-s.top()-1));
+                maxArea = max(maxArea, ar_with_top);
+
+            }
+            
+        }
+        
+        while(!s.empty()){
+                int j = s.top();
+                s.pop();
+                int ar_with_top = heights[j]*(s.empty()?i:(i-s.top()-1));
+
+                maxArea = max(maxArea, ar_with_top);
+
+            }
+        return maxArea;
+    }
+};
