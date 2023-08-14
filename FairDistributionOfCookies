@@ -1,0 +1,161 @@
+/***** DFS sol********/
+/***** see bitmask sol below very imp*******/
+
+
+
+class Solution {
+public:
+
+    void dfs(vector<int>& cookies, vector<int>& dis, int index, int children, int k, int& res){
+        if(index==cookies.size()){
+            int maxv=0;
+            for(int i=0;i<k;i++){
+                maxv=max(maxv, dis[i]);
+            }
+            res = min(res, maxv);
+            cout<<res<<endl;
+            return;
+        }
+
+        for(int i=0;i<children;i++){
+            dis[i]+=cookies[index];
+            dfs(cookies, dis, index+1, children, k, res);
+            dis[i]-=cookies[index];
+        }
+
+        if(children<k){
+            dis[children]+= cookies[index];
+            dfs(cookies, dis, index+1, children+1, k, res);
+            dis[children] -= cookies[index];
+        }
+
+        
+
+    }
+    int distributeCookies(vector<int>& cookies, int k) {
+        vector<int> dis(k,0);
+        int res = INT_MAX;
+        dfs(cookies,dis, 0,0,k,res);
+        return res;
+    }
+};
+
+
+
+
+
+/*********bitmask sol *******/
+class Solution {
+public:
+    vector<vector<int>> dp;
+    
+    // Function to calculate the unfairness using dynamic programming
+    int unfairness(vector<int>& cookies, int n, int k, int bagMask) {
+        // If the subproblem has already been solved, return the pre-calculated value
+        if (dp[k][bagMask] != -1)
+            return dp[k][bagMask];
+        
+        // Function to calculate the sum of cookies in a bag based on the Mask
+        auto sum_cookies = [&](int Mask) -> int {
+            int sum = 0;
+            for (int i = 0; i < n; i++) {
+                // Check if the ith cookie is included in the bag
+                if (Mask & (1 << i))
+                    sum += cookies[i];
+            }
+            return sum;
+        };
+
+        // Base case: If there is only one bag remaining, return the sum of cookies in the bag
+        if (k == 1) 
+            return dp[k][bagMask] = sum_cookies(bagMask);
+
+        int ans = INT_MAX;
+        // Iterate over all possible subsets of the cookies in the bag
+        for (int Mask = bagMask; Mask > 0; Mask = (Mask - 1) & bagMask) {
+            // Calculate the sum of cookies in the current subset
+            int sum1 = sum_cookies(Mask);
+            // Recursively solve the subproblem for the remaining bags
+            int sum2 = unfairness(cookies, n, k - 1, bagMask ^ Mask);
+            // Update the minimum unfairness by considering the maximum of the current subset and the subproblem solution
+            ans = min(ans, max(sum1, sum2));
+        }
+
+        // Store the minimum unfairness in the dp array for future reference and return it
+        return dp[k][bagMask] = ans;
+    }
+
+    // Main function to distribute cookies among children while minimizing unfairness
+    int distributeCookies(vector<int>& cookies, int k) {
+        int n = cookies.size();
+        // Initialize the dp array with -1 to indicate that subproblems have not been solved yet
+        dp.assign(k + 1, vector<int>(1 << n, -1));
+        // Start the recursive dynamic programming solution from the full bag mask
+        return unfairness(cookies, n, k, (1 << n) - 1);
+    }
+};
+
+/*****chatgpt answers to understnd bitmask*******/
+1.)what does 1<<n imply in initialization of vector
+
+In the code you provided, the expression `1 << n` is used to initialize the size of the inner vector in the `dp` array. Let's break down what `1 << n` means in this context:
+
+The `<<` operator is the left shift operator in C++. It shifts the bits of the left operand to the left by the number of positions specified by the right operand. 
+In this case, the left operand is the number 1, which in binary representation is `00000001`.
+
+So, when you perform `1 << n`, it means you're shifting the binary representation of 1 to the left by `n` positions. This effectively results in a binary number with the `n+1`-th bit set to 1, and all other bits set to 0.
+
+For example, if `n` is 3:
+- Binary representation of 1: `00000001`
+- Shifting left by 3 positions: `00001000`
+
+This result is used as the size of the inner vector in the `dp` array, indicating that each inner vector will have `2^n` elements. 
+This is because the binary representation of a number from 0 to 2^n - 1 covers all possible combinations of the `n` bits, and each combination represents a unique state in the dynamic programming problem being solved in the code.
+
+2.)what does [&](int Mask) mean
+Here, sum_cookies is a lambda function that takes an integer parameter named Mask. The & before the parameter list indicates that the lambda function captures 
+variables from the enclosing scope (in this case, the scope where sum_cookies is defined) by reference. This means that any variables from the outer scope that are referenced within the lambda function will be accessed and modified directly, 
+rather than creating copies of them.
+
+In the lambda function's body, you can use variables from the surrounding scope without explicitly passing them as arguments. For example, if there was a variable named cookies defined in the surrounding scope, 
+you could access it directly within the lambda function
+
+3.)whay are we bassing MAsk^bagmask for recursive calls
+The expression `bagMask ^ Mask` is used to create a new bitmask that represents the cookies that are not included in the current bag for the recursive call in the code you provided. Let's break down why this operation is used and why it's relevant for the recursive calls:
+
+In the context of the problem being solved, the `bagMask` represents the cookies that are available for selection in the current bag, and `Mask` represents the subset of cookies that are currently included in the bag.
+
+When the recursive call is made with the modified bitmask `bagMask ^ Mask`, it effectively removes the cookies that are already included in the current bag from the set of available cookies. This is because the bitwise XOR (`^`) operation flips the bits where the two input bitmasks have differing values.
+
+Here's why this operation is relevant for the recursive calls:
+
+1. Initially, you have all cookies available for selection (`bagMask` represents all cookies). When you include a subset of cookies in the bag (`Mask`), you need to ensure that these cookies are no longer available for the next bag (since they've already been included).
+
+2. By using `bagMask ^ Mask`, you are creating a new bitmask where the bits corresponding to the cookies included in the current bag are flipped to 0. This effectively removes those cookies from the available choices for the next bag.
+
+3. This operation ensures that the recursive calls for the next bag will only consider the cookies that have not been included in the current bag. It helps in exploring all possible combinations of cookies for each bag without duplicating or missing any combinations.
+
+In summary, the expression `bagMask ^ Mask` is used to modify the bitmask for the recursive call, effectively removing the cookies that have already been included in the current bag. This ensures that the algorithm explores all possible combinations of cookies for each bag while keeping track of the available 
+choices accurately.
+
+4.)why is mask updated as (mask-1)&bagmask in for loop
+
+
+The expression `(Mask - 1) & bagMask` is used in the for loop to iterate through all possible non-empty subsets of cookies in the current bag. This technique is often referred to as "generating all subsets using bit manipulation." Let's break down why this expression is used and how it helps in generating the subsets:
+
+1. `(Mask - 1)`: When you subtract 1 from a positive integer, it effectively flips the rightmost set bit to 0 and all the bits to the right of it to 1. This operation effectively removes the last included element from the current subset represented by `Mask`.
+
+2. `& bagMask`: The bitwise AND operation with `bagMask` ensures that you only consider the bits that were originally set in the `bagMask` before subtracting 1. This is important because you want to generate subsets that are valid within the constraints of the current bag (i.e., you want to exclude cookies that are not available in the bag).
+
+By combining these two operations, `(Mask - 1) & bagMask`, you effectively generate the next subset with one fewer element than the current subset. This allows you to iterate through all possible non-empty subsets of cookies in the bag.
+
+Here's how it works with an example:
+
+Suppose you have `n = 4` (4 cookies) and `bagMask = 1101` (cookies 1, 3, and 4 are available in the bag). Let's say you're considering the subset represented by `Mask = 1101` (which includes all available cookies). When you calculate `(Mask - 1) & bagMask`, you get:
+
+1. Subtract 1 from `Mask`: `1101 - 1 = 1100`
+2. Perform bitwise AND with `bagMask`: `1100 & 1101 = 1100`
+
+The result `1100` represents the next valid subset with one less element than the original subset. You repeat this process in the loop until `Mask` becomes 0, which represents an empty subset.
+
+In summary, `(Mask - 1) & bagMask` is used to generate all possible non-empty subsets of cookies in the current bag. This technique helps systematically explore different combinations of cookies in an efficient manner.
