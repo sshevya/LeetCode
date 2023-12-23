@@ -1,3 +1,6 @@
+
+/*********** Solution 1**************/
+
 class Solution {
 public:
 
@@ -57,5 +60,48 @@ public:
 
             }
         return maxArea;
+    }
+};
+
+
+
+/************* Solution 2 ***************/
+class Solution {
+public:
+    int largestRectangleArea(vector<int>& heights) {
+        int n = heights.size();
+        stack<int> s;
+        int max_ar = 0;
+        int i=0;
+        
+        while(i<n){
+            if(i<n && (s.empty() || heights[s.top()]<=heights[i])){
+                s.push(i);
+                i++;
+            }
+            else{
+                int top = s.top();
+                s.pop();
+
+                int width = s.empty()?i:i-s.top()-1;
+
+                int ar = width*heights[top];
+                max_ar = max(max_ar, ar);
+
+            }
+        }
+
+
+        while(!s.empty()){
+            int top = s.top();
+            s.pop();
+
+            int width = s.empty()?n:n-s.top()-1;
+            cout<<width<<" ";
+            int ar = width*heights[top];
+            max_ar = max(max_ar, ar);
+        }
+
+        return max_ar;
     }
 };
