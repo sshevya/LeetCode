@@ -1,0 +1,34 @@
+class Solution {
+public:
+    int divide(int dividend, int divisor) {
+    
+        bool isPositive = (dividend<0==divisor<0);
+
+        if(abs(dividend) == abs(divisor)){
+            return isPositive?1:-1;
+        }
+
+        if(divisor == 1){
+            return dividend;
+        }
+
+        unsigned int a = abs(dividend);
+        unsigned int b = abs(divisor);
+
+        unsigned int ans=0;
+        while(a>=b){
+            int q = 0;
+            while(a>(b<<(q+1))){
+                q++;
+            }
+
+            ans += (1<<q);
+            a = a - (b<<q); //reduce the dividend by divisor * power of 2
+        }
+        if(ans == (1<<31)){
+            return isPositive? INT_MAX : INT_MIN;
+        }
+
+        return isPositive? ans: -1*ans;
+    }
+};
