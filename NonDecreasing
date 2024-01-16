@@ -1,0 +1,61 @@
+/****** Bit mask Sol **********/
+class Solution {
+public:
+    vector<vector<int>> findSubsequences(vector<int>& nums) {
+        set<vector<int>>ans;
+        int n=nums.size();
+         for(int bitmask=0;bitmask<(1<<n);bitmask++){
+             vector<int>temp;
+             for(int i=0;i<n;i++){
+                 if(bitmask&(1<<i) && (temp.empty() || nums[i]>=temp.back()))temp.push_back(nums[i]);
+             }
+             if(temp.size()>1){
+                 ans.insert(temp);
+             }
+         }
+         return vector(ans.begin(),ans.end());
+    }
+};
+
+
+/***********Backtracking sol ******/
+
+
+class Solution {
+public:
+
+    void backtrack(map<vector<int>, int> &m, vector<int> &curr, vector<int> &nums, int ind){
+        
+        if(curr.size()>=2){
+            //cout<<"here2 ";
+           m[curr]++;
+        }
+
+        if(ind >= nums.size()){
+            return;
+        }
+
+        for(int i=ind; i<nums.size() ;i++){
+            if(i>ind && nums[i]==nums[i-1]){
+                continue;
+            }
+            if(curr.empty() || nums[i]>=curr.back()){
+                curr.push_back(nums[i]);
+                backtrack(m, curr, nums, i+1);
+                curr.pop_back();
+            }
+        }
+    }
+
+    vector<vector<int>> findSubsequences(vector<int>& nums) {
+        vector<vector<int>> ans;
+        vector<int> curr;
+        map<vector<int>, int> m;
+        backtrack(m, curr, nums, 0);
+
+        for(auto v:m){
+            ans.push_back(v.first);
+        }
+        return ans;
+    }
+};
