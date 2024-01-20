@@ -1,3 +1,56 @@
+/*** Solution 1 ***/
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+
+    void backtrack(TreeNode* root, vector<vector<int>> &ans, vector<int> curr, int currSum, int targetSum){
+        if(root==NULL){
+            return;
+        }
+
+        int val = root->val;
+        currSum += val;
+        curr.push_back(val);
+        cout<<currSum<<" "<<curr.back()<<endl;
+        if(currSum == targetSum){
+            if(root->left == NULL && root->right==NULL){
+                ans.push_back(curr);
+                return;
+            }
+        }
+
+        backtrack(root->left, ans, curr, currSum, targetSum);       
+        backtrack(root->right, ans, curr, currSum, targetSum);
+        currSum -= val;
+        curr.pop_back();
+        return;
+    }
+    
+
+    vector<vector<int>> pathSum(TreeNode* root, int targetSum) {
+        vector<vector<int>> ans;
+
+        vector<int> curr;
+
+        backtrack(root, ans, curr, 0, targetSum);
+        return ans;
+    }
+};
+
+
+/*** Solution 2 *****/
+
 class Solution {
 public:
     
